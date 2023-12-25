@@ -1,3 +1,8 @@
-h1 {
-    color: red;
+:root {
+    --primary: #b7ffd7;
+}
+
+#navbar{
+    background-color: var(--primary);
+    font-size: 20px;
 }

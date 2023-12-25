@@ -1,0 +1,21 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}Search{% endblock title %}
+    {% block content %}
+    <h1>Serach</h1>
+    <form class="form-inline mt-2 mt-md-0" action="{% url 'search' %}"
+    method="get">
+    {% csrf_token %}
+    <input name="q" class="form-control mr-sm-2" type="text" placeholder="Search"
+    aria-label="Search">
+    </form>
+    {% if destination_list %}
+        <ul>
+        {% for destination in destination_list %}
+        <li>
+            <a href="{{ destination.get_absolute_url }}">{{ destination }}</a>
+        </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock content %}

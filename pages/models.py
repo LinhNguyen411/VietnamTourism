@@ -1,18 +1,28 @@
 from django.db import models
 from django.urls import reverse
 import unicodedata
+import re
 # Create your models here.
 
+TABLE = str.maketrans(
+    "ÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴáàảãạăắằẳẵặâấầẩẫậđèéẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ",
+    "A"*17 + "D" + "E"*11 + "I"*5 + "O"*17 + "U"*11 + "Y"*5 + "a"*17 + "d" + "e"*11 + "i"*5 + "o"*17 + "u"*11 + "y"*5
+)
+
+def normalize(txt: str) -> str:
+    if not unicodedata.is_normalized("NFC", txt):
+        txt = unicodedata.normalize("NFC", txt)
+    return txt.translate(TABLE)
 
 class Region(models.Model):
     name = models.CharField(max_length = 50, null = False, unique = True)
     introduction = models.TextField()
 
     def get_normalize_name(self):
-        return ''.join(c for c in unicodedata.normalize('NFD', self.name) if unicodedata.category(c) != 'Mn').lower().replace(' ', '-')
+        return '-'.join(re.findall(r'\w+', normalize(self.name))).lower()
 
     def __str__(self):
-        return self.get_normalize_name()
+        return self.name
     def get_absolute_url(self):
         return reverse('region-detail', args=[self.get_normalize_name()])
 
@@ -29,10 +39,10 @@ class City(models.Model):
     banner = models.FileField(upload_to=get_upload_path)
 
     def get_normalize_name(self):
-        return ''.join(c for c in unicodedata.normalize('NFD', self.name) if unicodedata.category(c) != 'Mn').lower().replace(' ', '-')
+        return '-'.join(re.findall(r'\w+', normalize(self.name))).lower()
 
     def __str__(self):
-        return self.get_normalize_name()
+        return self.name
     
     def get_absolute_url(self):
         return reverse('city-detail', args=[self.region.get_normalize_name(),self.get_normalize_name()])
@@ -49,7 +59,7 @@ class Category(models.Model):
     name = models.CharField(max_length = 150)
 
     def __str__(self):
-        return ''.join(c for c in unicodedata.normalize('NFD', self.name) if unicodedata.category(c) != 'Mn').lower().replace(' ', '-')
+        return self.name
 
 class Destination(models.Model):
     name = models.CharField(max_length = 150, null = False)
@@ -65,10 +75,10 @@ class Destination(models.Model):
     banner = models.FileField(upload_to=get_upload_path)
 
     def get_normalize_name(self):
-        return ''.join(c for c in unicodedata.normalize('NFD', self.name) if unicodedata.category(c) != 'Mn').lower().replace(' ', '-')
+        return '-'.join(re.findall(r'\w+', normalize(self.name))).lower()
 
     def __str__(self):
-        return self.get_normalize_name()
+        return self.name
     
     def get_absolute_url(self):
         return reverse('destination-detail', args=[self.city.region.get_normalize_name(),self.city.get_normalize_name(),self.get_normalize_name()])
