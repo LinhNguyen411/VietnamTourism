@@ -2,8 +2,10 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
-from .models import Region, City, Destination
+from .models import Region, City, Destination, Category
 from django.http import Http404
+
+from django.db.models import Q
 # Create your views here.
 class HomePageView(TemplateView):
     template_name = 'home.html'
@@ -65,9 +67,20 @@ class SearchView(ListView):
     template_name = 'search.html'
     def get_queryset(self):
         if len(self.request.GET):
-            query = self.request.GET.get('q')
-            return Destination.objects.filter(
-            name__unaccent__icontains=query)
+            name = self.request.GET.get('name')
+            city = self.request.GET.get('city')
+            category = self.request.GET.get('category')
+
+            objects = Destination.objects.all()
+            if city:
+                objects = objects.filter(city__name=city)
+            if category:
+                objects = objects.filter(category__name=category)
+            return objects.filter(name__unaccent__icontains=name)
         else:
-            print('hello')
             return Destination.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
+        context['city_list'] = City.objects.all()
+        context['category_list'] = Category.objects.all()
+        return context

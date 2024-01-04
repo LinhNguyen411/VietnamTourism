@@ -1,21 +1,57 @@
 {% extends '_base.html' %}
-{% load static %}
 {% block title %}Search{% endblock title %}
-    {% block content %}
-    <h1>Serach</h1>
-    <form class="form-inline mt-2 mt-md-0" action="{% url 'search' %}"
-    method="get">
-    {% csrf_token %}
-    <input name="q" class="form-control mr-sm-2" type="text" placeholder="Search"
-    aria-label="Search">
-    </form>
-    {% if destination_list %}
-        <ul>
-        {% for destination in destination_list %}
-        <li>
-            <a href="{{ destination.get_absolute_url }}">{{ destination }}</a>
-        </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+{% block content %}
+<section id="search-section">
+    <div class="container">
+        <h2 class="pt-30">Tra Cứu Địa Điểm Du Lịch</h2>
+        <form method="get" action="{% url 'search' %}" id="search-bar" class="flex">
+            {% csrf_token %}
+            <div class="search-group flex">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input name="name" type="text" id="fname" placeholder="Tên điểm du lịch">
+            </div>
+            <div class="search-group flex">
+                <i class="fa-solid fa-city"></i>
+                <select name="city" id="fcity">
+                    <option value="">Tỉnh, thành phố</option>
+                    {% if city_list %}
+                    {% for city in city_list %}
+                        <option value="{{city}}">{{city}}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+            <div class="search-group flex">
+                <i class="fa-solid fa-umbrella-beach"></i>
+                <select name="category" id="fcategory">
+                    <option value="">Đặc điểm</option>
+                    {% if category_list %}
+                    {% for category in category_list %}
+                        <option value="{{category}}">{{category}}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+            <button type="submit">Tra Cuu</button>
+        </form>
+
+        {% if destination_list %}
+        <div id="total-result">{{ destination_list.count }} kết quả</div>
+        <div class="search-result">
+            {% for destination in destination_list %}
+            <a class="result-item flex" href="{{destination.get_absolute_url}}">
+                <img src="{{destination.banner.url}}" class="result-img">
+                <div class="result-content">
+                    <h1 class="result-name">{{destination}}</h1>
+                    <p class="result-location"><i class="fa-solid fa-location-dot"></i>{{destination.location}}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div id="total-result">0 kết quả</div>
+        {% endif %}
+
+    </div>
+</section>
 {% endblock content %}

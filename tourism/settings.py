@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-&n(=yrgg=oyu60@!!7@p&jhyz5vw3-yv#p@t9*ss9zs6t+r!ek'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=0))
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
 
     #my app
     'pages.apps.PagesConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -82,12 +81,12 @@ WSGI_APPLICATION = 'tourism.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432
-}
+        'NAME': os.environ.get("SQL_NAME"),
+        'USER': os.environ.get("SQL_USER"),
+        'PASSWORD': os.environ.get("SQL_PASSWORD"),
+        'HOST': os.environ.get("HOST"),
+        'PORT': os.environ.get("PORT"),
+    }
 }
 
 
@@ -142,4 +141,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

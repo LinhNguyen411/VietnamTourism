@@ -1,21 +1,28 @@
-version: '3.7'
+version: "3.8"
 
 services:
   web:
-    build: .
-    command: python /code/manage.py runserver 0.0.0.0:8000
-    environment:
-      - SECRET_KEY=django-insecure-mv6f#b1906f=zo@cs!8xg=0kxf^vj)ktrl_bcm_y!i@@+24^m6
-      - DEBUG=1
-    volumes:
-      - .:/code
+    build:
+      context: .
     ports:
-      - 8000:8000
-    depends_on:
-      - db
-  db:
-    image: postgres:11
+      - "8000:8000"
+    command: ["sh", "./start.sh"]
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+  
+  postgres_db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${SQL_NAME}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      
+    
 volumes:
   postgres_data:

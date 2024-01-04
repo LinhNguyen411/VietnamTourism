@@ -1,4 +1,7 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from django.urls import reverse
 import unicodedata
 import re
@@ -18,6 +21,8 @@ class Region(models.Model):
     name = models.CharField(max_length = 50, null = False, unique = True)
     introduction = models.TextField()
 
+    banner = models.FileField(upload_to='regions/')
+
     def get_normalize_name(self):
         return '-'.join(re.findall(r'\w+', normalize(self.name))).lower()
 
@@ -25,13 +30,21 @@ class Region(models.Model):
         return self.name
     def get_absolute_url(self):
         return reverse('region-detail', args=[self.get_normalize_name()])
+    
+    class Meta:
+        ordering = ('id',)
 
 class City(models.Model):
     name = models.CharField(max_length = 50, null = False, unique = True)
+    
     region = models.ForeignKey(Region, on_delete=models.RESTRICT, null = True)
     introduction = models.TextField()
     weather = models.TextField()
+
     transport = models.TextField()
+
+    def transport_lines(self):
+        return filter(None, (line.strip() for line in self.transport.splitlines()))
 
     def get_upload_path(self, filename):
         return "%s/%s/%s" % (self.get_normalize_name(),self.get_normalize_name(), filename)
@@ -46,6 +59,9 @@ class City(models.Model):
     
     def get_absolute_url(self):
         return reverse('city-detail', args=[self.region.get_normalize_name(),self.get_normalize_name()])
+    
+    class Meta:
+        ordering = ('id',)
     
 class CityGallery(models.Model):
     city = models.ForeignKey(City, on_delete=models.RESTRICT)

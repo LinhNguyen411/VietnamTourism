@@ -1,9 +1,66 @@
 {% extends '_base.html' %}
-{% block title %}Home{% endblock title %}
+{% load static %}
+{% block title %}{{destination}}{% endblock title %}
 
 {% block content %}
-    <div class="container">
-        <h1>{{ destination }}</h1>
-        
+<section class="homepage" id="home-section">
+    <div class="content flex" style="background-image: url('{{destination.banner.url}}');">
+        <div class="text">
+            <h1>{{destination}}</h1>
+        </div>
+        <div class="location"><i class="fa-solid fa-location-dot"></i> {{destination.location}}</div>
     </div>
+</section>
+
+
+<!-- Homepage End -->
+
+<!-- About Start -->
+
+<section id="about-section">
+    <div class="container">
+        <h2>Về {{destination}}</h2>
+        <div class="section-info">
+            <p>
+                {{destination.description|linebreaks}}
+            </p>
+        </div>
+    </div>
+</section>
+<!-- About End -->
+
+<!-- Gallery Start --> 
+
+<section id="gallery-section">
+    <div class="container">
+        <h2>Thư Viện Ảnh</h2>
+        <div class="image-container">
+            {% for gallery in destination.destinationgallery_set.all %}
+                <div class="image"><img src="{{ gallery.image.url }}" alt="{{gallery.destination}}"></div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="popup-image">
+        <span>&times;</span>
+        <img src="" alt="">
+    </div>
+</section>
+
+<!-- Gallery End -->
+
+<section class="url-section">
+    <div class="url">
+        <a href="{% url 'vietnam' %}">Việt Nam</a>
+        <i class="fa-solid fa-angle-double-right"></i>
+        <a href="{{ destination.city.region.get_absolute_url }}">{{ destination.city.region}}</a>
+        <i class="fa-solid fa-angle-double-right"></i>
+        <a href="{{ destination.city.get_absolute_url }}">{{destination.city}}</a>
+        <i class="fa-solid fa-angle-double-right"></i>
+        <a href="{{ destination.get_absolute_url }}" class="current-url">{{destination}}</a>
+    </div>
+</section>
 {% endblock content %}
+
+{% block script %}
+    <script src="{% static 'scripts/script.js' %}"></script>
+{% endblock %}

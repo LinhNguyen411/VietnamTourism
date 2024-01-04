@@ -1,17 +1,56 @@
 {% extends '_base.html' %}
-{% block title %}Home{% endblock title %}
+{% block title %}{{region}}{% endblock title %}
 
 {% block content %}
-    <div class="container">
-        <h1>{{ region }}</h1>
-        {% if region.city_set.all %}
-        <ul>
-        {% for city in region.city_set.all %}
-        <li>
-            <a href="{{ city.get_absolute_url }}">{{ city }}</a>
-        </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
+<section class="homepage" id="home-section">
+    <div class="content flex" style="background-image: url('{{region.banner.url}}');">
+        <div class="text">
+            <h1>{{region}}</h1>
+        </div>
     </div>
+</section>
+<!-- Homepage End -->
+
+<!-- About Start -->
+<section id="about-section">
+    <div class="container">
+        <h2>Về {{region}}</h2>
+        <div class="section-info">
+            <p>
+                {{region.introduction|linebreaks}}
+            </p>
+        </div>
+    </div>
+</section>
+<!-- About End -->
+
+<!-- Slider Start -->
+<section id="slider-section">
+    <div class="container width-100">
+        <h2>Các tỉnh thành nổi bật</h2>
+        <div class="box flex">
+            <div class="slider">
+                {% for city in region.city_set.all %}
+                    <div class="item" style="background-image: url('{{ city.banner.url }}');">
+                        <h1>{{city}}</h1>
+                        <a href="{{ city.get_absolute_url }}">Xem Thêm</a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="buttons">
+                <button id="prev"><i class="fa-solid fa-arrow-left"></i></button>
+                <button id="next"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+</section>
+
+<!-- Slider End -->
+<!-- Footer -->
+<section class="url-section">
+    <div class="url">
+        <a href="{% url 'vietnam' %}">Việt Nam</a>
+        <i class="fa-solid fa-angle-double-right"></i>
+        <a href="{{ region.get_absolute_url }}" class="current-url">{{region}}</a>
+    </div>
+</section>
 {% endblock content %}
